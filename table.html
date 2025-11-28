@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Marks Table</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { cursor: pointer; background: #f2f2f2; }
+    select { padding: 6px; }
+  </style>
+</head>
+<body>
+  <h2>Student Marks Table</h2>
+
+  <!-- Filter -->
+  <label for="filterSubject">Filter by Subject Code:</label>
+  <select id="filterSubject" onchange="filterTable()">
+    <option value="all">All</option>
+    <option value="MATH101">MATH101</option>
+    <option value="PHY102">PHY102</option>
+    <option value="CS103">CS103</option>
+  </select>
+
+  <!-- Marks Table -->
+  <table id="marksTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Student Name</th>
+        <th onclick="sortTable(1)">Subject Code</th>
+        <th onclick="sortTable(2)">Marks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Asha</td><td>MATH101</td><td>88</td></tr>
+      <tr><td>Rahul</td><td>PHY102</td><td>76</td></tr>
+      <tr><td>Meera</td><td>CS103</td><td>92</td></tr>
+      <tr><td>Karan</td><td>MATH101</td><td>67</td></tr>
+      <tr><td>Sita</td><td>CS103</td><td>81</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    // Sorting function
+    function sortTable(colIndex) {
+      const table = document.getElementById("marksTable");
+      let switching = true;
+      let dir = "asc";
+
+      while (switching) {
+        switching = false;
+        const rows = table.rows;
+
+        for (let i = 1; i < rows.length - 1; i++) {
+          let shouldSwitch = false;
+          const x = rows[i].getElementsByTagName("TD")[colIndex];
+          const y = rows[i + 1].getElementsByTagName("TD")[colIndex];
+
+          let xVal = isNaN(parseFloat(x.innerHTML)) ? x.innerHTML.toLowerCase() : parseFloat(x.innerHTML);
+          let yVal = isNaN(parseFloat(y.innerHTML)) ? y.innerHTML.toLowerCase() : parseFloat(y.innerHTML);
+
+          if (dir === "asc" && xVal > yVal) {
+            shouldSwitch = true;
+            break;
+          }
+          if (dir === "desc" && xVal < yVal) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+        } else {
+          if (dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+
+    // Filtering function
+    function filterTable() {
+      const filter = document.getElementById("filterSubject").value;
+      const rows = document.querySelectorAll("#marksTable tbody tr");
+
+      rows.forEach(row => {
+        const subject = row.cells[1].innerText;
+        row.style.display = (filter === "all" || subject === filter) ? "" : "none";
+      });
+    }
+  </script>
+</body>
+</html>
